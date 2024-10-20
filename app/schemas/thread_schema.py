@@ -17,11 +17,11 @@ class ThreadType(str, Enum):
 class ThreadBase(BaseModel):
     """Base schema for a Thread."""
 
-    model_config=model_config
+    model_config = model_config
     type: ThreadType
     messages: list[Message] = []
     external_thread_fields: Dict[str, Any] = {}
-    
+
     def add_message(self, message: Message) -> None:
         """Add a message to the thread."""
         self.messages.append(message)
@@ -29,6 +29,14 @@ class ThreadBase(BaseModel):
     def process_thread(self, thread_agent: ThreadAgent) -> None:
         """Process the thread."""
         if not isinstance(thread_agent, ThreadAgent):
-            raise ValueError("The thread agent must be an instance of ThreadAgent.")
-        
-        thread_agent.agent_run(self.messages, **self.external_thread_fields)
+            raise ValueError(
+                "The thread agent must be an instance of ThreadAgent."
+            )
+
+        ## TODO:
+        ## 1. Deal gracefully with exceptions
+        ## 2. Update external thread fields based on the agent's output
+        message = thread_agent.agent_run(
+            self.messages, **self.external_thread_fields
+        )
+        self.add_message(message)
