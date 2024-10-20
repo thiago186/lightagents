@@ -14,6 +14,15 @@ class MessageRole(str, Enum):
     SYSTEM="system"
     AI="ai"
     
+    @staticmethod
+    def get_roles_mapping() -> dict[str, str]:
+        """Get the role mapping."""
+        return {
+            MessageRole.USER.value: "user",
+            MessageRole.SYSTEM.value: "system",
+            MessageRole.AI.value: "ai"
+        }
+    
     
 class MessageType(str, Enum):
     """Possible types for a single message."""

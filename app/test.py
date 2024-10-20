@@ -1,6 +1,8 @@
-from app.ai_agents.gcp_claude import ClaudeAgent
+from app.ai_agents.claude_agent import ClaudeAgent
+from app.logger_config import setup_logger
 from app.schemas.messages_schemas import Message, MessageRole, MessageType
 from app.schemas.thread_schema import ThreadBase, ThreadType
+from app.utils.serializers import bedrock_claude_serializer
 
 message1 = Message(
     role=MessageRole.USER,
@@ -57,9 +59,9 @@ thread = ThreadBase(
     messages=[message1, message2, message3, message4]
 )
 
-agent = ClaudeAgent()
+bedrock_claude_serializer(thread.messages)
 
-w = agent.agent_run(thread.messages)
-
-thread.add_message(message5)
-w = agent.agent_run(thread.messages)
+agent = ClaudeAgent(serializer=bedrock_claude_serializer)
+thread.process_thread(agent)
+# thread.add_message(message5)
+# w = agent.agent_run(thread.messages)
