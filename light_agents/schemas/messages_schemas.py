@@ -4,7 +4,7 @@ from typing import Any, Optional, Union
 
 from pydantic import BaseModel
 
-from src.schemas.model_config import model_config
+from light_agents.schemas.model_config import model_config
 
 
 class MessageRole(str, Enum):

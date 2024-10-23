@@ -1,6 +1,6 @@
 from typing import Any, List, MutableSequence
 
-from src.schemas.messages_schemas import (
+from light_agents.schemas.messages_schemas import (
     MessageBase,
 )
 

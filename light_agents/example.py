@@ -2,11 +2,15 @@ import json
 
 from pydantic import Field
 
-from src.ai_agents.claude_agent import ClaudeAgent
-from src.schemas import ToolBaseSchema, ToolResponseSchema
-from src.schemas.messages_schemas import Message, MessageRole, MessageType
-from src.schemas.thread_schema import ThreadBase, ThreadType
-from src.serializers.tools import claude_tool_calling_serializer
+from light_agents.ai_agents.claude_agent import ClaudeAgent
+from light_agents.schemas import ToolBaseSchema, ToolResponseSchema
+from light_agents.schemas.messages_schemas import (
+    Message,
+    MessageRole,
+    MessageType,
+)
+from light_agents.schemas.thread_schema import ThreadBase, ThreadType
+from light_agents.serializers.tools import claude_tool_calling_serializer
 
 
 class GetWeather(ToolBaseSchema):

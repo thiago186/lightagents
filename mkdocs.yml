@@ -6,3 +6,9 @@ repo_name: thiago186/lightagents
 theme:
   name: material
   language: en
+
+plugins:
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [light_agents]

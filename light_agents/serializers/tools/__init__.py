@@ -1,4 +1,4 @@
-from src.serializers.tools.claude_tools_serializer import (
+from light_agents.serializers.tools.claude_tools_serializer import (
     claude_tool_calling_serializer,
 )
 

@@ -1,14 +1,14 @@
 from typing import Any, Dict, List, MutableSequence
 
-from src.logger_config import setup_logger
-from src.schemas.messages_schemas import (
+from light_agents.logger_config import setup_logger
+from light_agents.schemas.messages_schemas import (
     Message,
     MessageBase,
     MessageRole,
     MessageType,
     ToolUseMessage,
 )
-from src.serializers.tools.claude_tools_serializer import (
+from light_agents.serializers.tools.claude_tools_serializer import (
     claude_tool_response_serializer,
 )
 

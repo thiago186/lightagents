@@ -1,7 +1,7 @@
 from typing import Any, Callable, Dict, List
 
-from src.logger_config import setup_logger
-from src.schemas.tool_schema import ToolBaseSchema, ToolResponseSchema
+from light_agents.logger_config import setup_logger
+from light_agents.schemas.tool_schema import ToolBaseSchema, ToolResponseSchema
 
 logger = setup_logger(__name__)
 

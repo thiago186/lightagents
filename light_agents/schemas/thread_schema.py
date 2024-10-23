@@ -3,9 +3,9 @@ from typing import Any, Dict, MutableSequence, Sequence
 
 from pydantic import BaseModel
 
-from src.schemas.messages_schemas import MessageBase
-from src.schemas.model_config import model_config
-from src.schemas.thread_agent_schema import ThreadAgent
+from light_agents.schemas.messages_schemas import MessageBase
+from light_agents.schemas.model_config import model_config
+from light_agents.schemas.thread_agent_schema import ThreadAgent
 
 
 class ThreadType(str, Enum):

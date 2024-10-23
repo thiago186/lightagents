@@ -58,7 +58,8 @@ pythonpath="."
 addopts="--doctest-modules"
 
 [tool.taskipy.tasks]
-lint = "bandit -r ./src && ruff check ./src && ruff check --select I --fix ./src && mypy ./src"
+lint = "bandit -r ./light_agents && ruff check ./light_agents && ruff check --select I --fix ./light_agents && mypy ./light_agents"
+docs = "mkdocs serve --dev-addr=localhost:8001"
 pre_test = "task lint"
-test = "pytest -s -x --cov=src -vv"
+test = "pytest -s -x --cov=light_agents -vv"
 post_test = "coverage html"

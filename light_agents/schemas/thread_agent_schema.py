@@ -3,9 +3,9 @@ from typing import Any, Callable, Dict, List, MutableSequence, Sequence
 
 from pydantic import BaseModel
 
-from src.schemas.messages_schemas import MessageBase, ToolUseMessage
-from src.schemas.model_config import model_config
-from src.utils.serializers import base_serializer
+from light_agents.schemas.messages_schemas import MessageBase, ToolUseMessage
+from light_agents.schemas.model_config import model_config
+from light_agents.utils.serializers import base_serializer
 
 
 class ThreadAgent(ABC, BaseModel):
