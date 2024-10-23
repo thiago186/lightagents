@@ -2,8 +2,8 @@ from typing import Any, Callable, Dict, List
 
 from pydantic_core.core_schema import CoreSchema
 
-from app.logger_config import setup_logger
-from app.schemas.tool_schema import ToolBaseSchema, ToolResponseSchema
+from src.logger_config import setup_logger
+from src.schemas.tool_schema import ToolBaseSchema, ToolResponseSchema
 
 logger = setup_logger(__name__)
 
@@ -51,12 +51,12 @@ class ToolRegistry:
 
         try:
             result = tool(**args)
-            
+
             if not isinstance(result, ToolResponseSchema):
                 raise ValueError(
                     f"Tool '{tool_name}' should return a ToolResponseSchema"
                 )
-            
+
             return result
         except Exception as e:
             logger.error(f"Error executing tool '{tool_name}': {e}")

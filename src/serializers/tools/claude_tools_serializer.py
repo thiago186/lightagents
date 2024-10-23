@@ -1,9 +1,9 @@
 from enum import Enum
 from typing import Any, Dict
 
-from app.logger_config import setup_logger
-from app.schemas import ToolBaseSchema, ToolUseMessage
-from app.serializers.tools.base_serializers import python_type_to_json_type
+from src.logger_config import setup_logger
+from src.schemas import ToolBaseSchema, ToolUseMessage
+from src.serializers.tools.base_serializers import python_type_to_json_type
 
 logger = setup_logger(__name__)
 
@@ -36,11 +36,7 @@ def claude_tool_calling_serializer(
         }
 
         annotation = llm_function.model_fields[param].annotation
-        if (
-            annotation
-            and isinstance(annotation, type)
-            and issubclass(annotation, Enum)
-        ):
+        if annotation and isinstance(annotation, type) and issubclass(annotation, Enum):
             claude_format["input_schema"]["properties"][param]["enum"] = list(
                 annotation.__members__.keys()
             )
@@ -52,7 +48,7 @@ def claude_tool_response_serializer(
     tool: ToolUseMessage, **kwargs: Any
 ) -> list[Dict[str, Any]]:
     """Serialize a single tool response for the Claude API.
-    
+
     The function creates both ```assistant``` tool request block and ```user```
     tool response block.
 
@@ -66,7 +62,7 @@ def claude_tool_response_serializer(
                 "name": "tool_name",
                 "input": {"arg1": "value1", "arg2": "value2"}
             }
-              
+
         },
         {
             "role": "user",
@@ -86,28 +82,24 @@ def claude_tool_response_serializer(
 
     tool_output = tool.tool_outputs
     if not isinstance(tool_output, str):
-        logger.warning(
-            "The tool output is not a string. Converting to string."
-        )
+        logger.warning("The tool output is not a string. Converting to string.")
         tool_output = str(tool.tool_outputs)
 
     tool_input = tool.input_params_dict
     if not isinstance(tool_input, dict):
-        logger.warning(
-            "The tool input is not a dictionary. Converting to dictionary."
-        )
+        logger.warning("The tool input is not a dictionary. Converting to dictionary.")
         tool_input = {"input": str(tool.input_params_dict)}
 
     serialized_tool_calling_message = {
         "role": "assistant",
         "content": [
             {
-            "type": "tool_use",
-            "id": tool.run_id,
-            "name": tool.name,
-            "input": tool.input_params_dict,
+                "type": "tool_use",
+                "id": tool.run_id,
+                "name": tool.name,
+                "input": tool.input_params_dict,
             }
-        ]
+        ],
     }
 
     serialized_tool_response_message = {

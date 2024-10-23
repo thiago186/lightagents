@@ -3,9 +3,9 @@ from typing import Any, Dict, MutableSequence
 
 from pydantic import BaseModel
 
-from app.schemas.messages_schemas import MessageBase
-from app.schemas.model_config import model_config
-from app.schemas.thread_agent_schema import ThreadAgent
+from src.schemas.messages_schemas import MessageBase
+from src.schemas.model_config import model_config
+from src.schemas.thread_agent_schema import ThreadAgent
 
 
 class ThreadType(str, Enum):
@@ -26,31 +26,24 @@ class ThreadBase(BaseModel):
         """Add a message to the thread."""
         if not isinstance(message, MessageBase):
             raise ValueError("The message must be an instance of MessageBase.")
-        
+
         self.messages.append(message)
-       
-    def add_messages_list(self, messages:MutableSequence[MessageBase]) -> None:
+
+    def add_messages_list(self, messages: MutableSequence[MessageBase]) -> None:
         """Add a list of messages to the thread."""
         if not all(isinstance(message, MessageBase) for message in messages):
-            raise ValueError(
-                "All messages must be instances of MessageBase."
-            )
-        
+            raise ValueError("All messages must be instances of MessageBase.")
+
         for message in messages:
             self.add_message(message)
 
     def process_thread(self, thread_agent: ThreadAgent) -> None:
         """Process the thread."""
         if not isinstance(thread_agent, ThreadAgent):
-            raise ValueError(
-                "The thread agent must be an instance of ThreadAgent."
-            )
+            raise ValueError("The thread agent must be an instance of ThreadAgent.")
 
         ## TODO:
         ## 1. Deal gracefully with exceptions
         ## 2. Update external thread fields based on the agent's output
-        messages = thread_agent.agent_run(
-            self.messages, **self.external_thread_fields
-        )
+        messages = thread_agent.agent_run(self.messages, **self.external_thread_fields)
         self.add_messages_list(messages)
-

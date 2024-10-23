@@ -16,22 +16,22 @@ from anthropic.types import Message as AnthropicMessage
 from anthropic.types import TextBlock as AnthropicTextBlock
 from pydantic import PrivateAttr
 
-from app.config import appSettings
-from app.logger_config import setup_logger
-from app.schemas import ToolBaseSchema
-from app.schemas.messages_schemas import (
+from src.config import appSettings
+from src.logger_config import setup_logger
+from src.schemas import ToolBaseSchema
+from src.schemas.messages_schemas import (
     Message,
     MessageBase,
     MessageRole,
     MessageType,
     ToolUseMessage,
 )
-from app.schemas.thread_agent_schema import ThreadAgent
-from app.serializers.messages.claude_messages_serializers import (
+from src.schemas.thread_agent_schema import ThreadAgent
+from src.serializers.messages.claude_messages_serializers import (
     claude_messages_list_serializer,
 )
-from app.serializers.tools import claude_tool_calling_serializer
-from app.tool_registry import ToolRegistry
+from src.serializers.tools import claude_tool_calling_serializer
+from src.tool_registry import ToolRegistry
 
 logger = setup_logger(__name__)
 
@@ -132,9 +132,7 @@ class ClaudeAgent(ThreadAgent):
 
         thread_messages.extend(run_messages)
 
-        if any(
-            isinstance(message, ToolUseMessage) for message in run_messages
-        ):
+        if any(isinstance(message, ToolUseMessage) for message in run_messages):
             kwargs["calling_from_inside_agent_run"] = True
             logger.debug(
                 "Tools were used. Feeding agent with results"
@@ -186,14 +184,11 @@ class ClaudeAgent(ThreadAgent):
             )
 
         serialized_tools = [self.tools_serializer(tool) for tool in self.tools]
-        logger.debug(
-            f"Serialized tools: {serialized_tools}"
-        ) if self.verbose else None
+        logger.debug(f"Serialized tools: {serialized_tools}") if self.verbose else None
 
         if system_message and isinstance(system_message, Message):
             logger.debug(
-                f"Calling agent with {self.system_message_selector} "
-                "system prompt."
+                f"Calling agent with {self.system_message_selector} " "system prompt."
             ) if self.verbose else None
 
             response = client.messages.create(
@@ -239,9 +234,7 @@ class ClaudeAgent(ThreadAgent):
                 ]
                 return messages
             else:
-                raise ValueError(
-                    f"Unexpected response content: {first_message}"
-                )
+                raise ValueError(f"Unexpected response content: {first_message}")
 
         elif stop_reason == "tool_use":
             logger.debug("The response requires tools processing.")
@@ -249,9 +242,7 @@ class ClaudeAgent(ThreadAgent):
             # if the content blocks are not ToolUseBlocks, ignore them
             for block in response.content:
                 if block.type == "tool_use":
-                    if isinstance(block.input, dict) or isinstance(
-                        block.input, str
-                    ):
+                    if isinstance(block.input, dict) or isinstance(block.input, str):
                         block_input = block.input
                     else:
                         block_input = str(block.input)
@@ -266,8 +257,7 @@ class ClaudeAgent(ThreadAgent):
                     tool_use_messages.append(tool_use_message)
                 else:
                     logger.warning(
-                        f"Ignoring '{block.type}' block since a tool"
-                        "will be used."
+                        f"Ignoring '{block.type}' block since a tool" "will be used."
                     ) if self.verbose else None
                     # raise ValueError(f"Unexpected tool use block: {block}")
             logger.debug(f"Passing to process_tools: {tool_use_messages}")

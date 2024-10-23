@@ -20,4 +20,3 @@ def python_type_to_json_type(value: Any) -> str:
         return "null"
     else:
         return "string"
-

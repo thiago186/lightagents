@@ -23,6 +23,7 @@ Color = Literal[
     "white",
 ]
 
+
 class ColoredFormatter(logging.Formatter):
     """Custom log formatter that colorizes the entire log message."""
 
@@ -49,7 +50,7 @@ class ColoredFormatter(logging.Formatter):
 def setup_logger(name: Optional[str] = None, **kwargs: Any) -> logging.Logger:
     """Set up the logger."""
     log_level = kwargs.get("log_level", logging.DEBUG)
-    
+
     logger = logging.getLogger(name)
     logger.setLevel(log_level)
 

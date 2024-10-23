@@ -1,12 +1,12 @@
-from typing import Any, List,MutableSequence
+from typing import Any, List, MutableSequence
 
-from app.schemas.messages_schemas import (
+from src.schemas.messages_schemas import (
     MessageBase,
 )
 
 
 def base_serializer(
-    messages:MutableSequence[MessageBase], **kwargs: Any
+    messages: MutableSequence[MessageBase], **kwargs: Any
 ) -> List[dict[str, str]]:
     """Serialize only messages role and content."""
     if not isinstance(messages, list):
@@ -21,7 +21,7 @@ def base_serializer(
 
 
 def role_mapping_serializer(
-    messages:MutableSequence[MessageBase], **kwargs: Any
+    messages: MutableSequence[MessageBase], **kwargs: Any
 ) -> List[dict[str, str]]:
     """Serialize only messages role and content.
 

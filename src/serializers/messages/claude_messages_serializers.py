@@ -1,14 +1,14 @@
 from typing import Any, Dict, List, MutableSequence
 
-from app.logger_config import setup_logger
-from app.schemas.messages_schemas import (
+from src.logger_config import setup_logger
+from src.schemas.messages_schemas import (
     Message,
     MessageBase,
     MessageRole,
     MessageType,
     ToolUseMessage,
 )
-from app.serializers.tools.claude_tools_serializer import (
+from src.serializers.tools.claude_tools_serializer import (
     claude_tool_response_serializer,
 )
 
@@ -52,9 +52,7 @@ def claude_text_message_serializer(
         return None
 
     if not role_mapping.get(message.role):
-        logger.warning(
-            f"'{message.role}' role is not supported. Ignoring message."
-        )
+        logger.warning(f"'{message.role}' role is not supported. Ignoring message.")
         return None
 
     serialized_message = {
@@ -78,9 +76,7 @@ def claude_messages_list_serializer(
         if isinstance(message, Message):
             if message.type == MessageType.TEXT:
                 ##TODO: handle text messages
-                serialized_message = claude_text_message_serializer(
-                    message, **kwargs
-                )
+                serialized_message = claude_text_message_serializer(message, **kwargs)
                 if serialized_message:
                     serialized_messages.append(serialized_message)
             else:
