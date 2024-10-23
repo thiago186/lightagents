@@ -1,4 +1,4 @@
-from typing import Any, Dict, List,MutableSequence
+from typing import Any, Dict, List, MutableSequence
 
 from app.logger_config import setup_logger
 from app.schemas.messages_schemas import (
@@ -52,19 +52,20 @@ def claude_text_message_serializer(
         raise ValueError(f"Role '{message.role}' is not supported.")
 
     serialized_message = {
-        "user": role_mapping.get(message.role),
+        "role": role_mapping.get(message.role),
         "content": message.content,
     }
 
     return serialized_message
 
 
-def claude_messages_serializer(
+def claude_messages_list_serializer(
     messages:MutableSequence[MessageBase], **kwargs: Any
 ) -> List[Dict[str, Any]]:
     """Serialize a series of messages for Claude API.
 
     Handles text messages and tool use messages.
+    *Not tested with Bedrock Claude.*
     """
     serialized_messages = []
     for message in messages:
@@ -82,7 +83,7 @@ def claude_messages_serializer(
                 )
 
         elif isinstance(message, ToolUseMessage):
-            serialized_messages.append(claude_tool_response_serializer(message))
+            serialized_messages.extend(claude_tool_response_serializer(message))
 
         else:
             logger.warning(
