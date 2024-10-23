@@ -59,5 +59,6 @@ addopts="--doctest-modules"
 
 [tool.taskipy.tasks]
 lint = "bandit -r ./src && ruff check ./src && ruff check --select I --fix ./src && mypy ./src"
+pre_test = "task lint"
 test = "pytest -s -x --cov=src -vv"
 post_test = "coverage html"
