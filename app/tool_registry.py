@@ -51,6 +51,12 @@ class ToolRegistry:
 
         try:
             result = tool(**args)
+            
+            if not isinstance(result, ToolResponseSchema):
+                raise ValueError(
+                    f"Tool '{tool_name}' should return a ToolResponseSchema"
+                )
+            
             return result
         except Exception as e:
             logger.error(f"Error executing tool '{tool_name}': {e}")

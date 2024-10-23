@@ -20,7 +20,7 @@ class ToolBaseSchema(ABC, BaseModel):
     )
     
     @abstractmethod
-    def run(self, *args: Any, **kwargs: Any) -> Any:
+    def run(self, *args: Any, **kwargs: Any) -> "ToolResponseSchema":
         """Python  function to be executed when the tool is called."""
         pass
     

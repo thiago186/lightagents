@@ -2,7 +2,7 @@ from pydantic import Field
 
 from app.ai_agents.claude_agent import ClaudeAgent
 from app.logger_config import setup_logger
-from app.schemas import ToolBaseSchema
+from app.schemas import ToolBaseSchema, ToolResponseSchema
 from app.schemas.messages_schemas import Message, MessageRole, MessageType
 from app.schemas.thread_schema import ThreadBase, ThreadType
 from app.serializers.tools import claude_tool_calling_serializer
@@ -38,8 +38,12 @@ class GetWeather(ToolBaseSchema):
         ..., description="The location to get the weather for."
     )
 
-    def run(self, location: str) -> str:
-        return f"The weather in {location} is sunny."
+    def run(self, location: str) -> ToolResponseSchema:
+        """Get the weather for a specific location."""
+        
+        return ToolResponseSchema(
+            content=f"The weather for {location} is sunny.",
+        )
 
 get_weather_tool = GetWeather(location="")
 
