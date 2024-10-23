@@ -39,10 +39,12 @@ mkdocstrings-python = "^1.12.2"
 
 [tool.ruff]
 line-length = 88
-select = ["E", "F", "I", "D"]
-ignore = ["D100", "D104", "W293"]
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint]
+select = ["E", "F", "I", "D"]
+ignore = ["D100", "D104", "W293", "D203", "D213"]
+
+[tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401"]
 
 [tool.mypy]
@@ -56,4 +58,6 @@ pythonpath="."
 addopts="--doctest-modules"
 
 [tool.taskipy.tasks]
-lint = "bandit -r ./src && ruff format ./src && ruff check --select I --fix ./src"
+lint = "bandit -r ./src && ruff check ./src && ruff check --select I --fix ./src && mypy ./src"
+test = "pytest -s -x --cov=src -vv"
+post_test = "coverage html"

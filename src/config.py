@@ -16,5 +16,4 @@ class AppSettings(BaseSettings):
     AWS_SECRET_KEY: Optional[str] = None
 
 
-appSettings = AppSettings()  # type: ignore
-print(appSettings)
+appSettings = AppSettings()

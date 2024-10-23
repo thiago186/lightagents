@@ -1,7 +1,5 @@
 from typing import Any, Callable, Dict, List
 
-from pydantic_core.core_schema import CoreSchema
-
 from src.logger_config import setup_logger
 from src.schemas.tool_schema import ToolBaseSchema, ToolResponseSchema
 
