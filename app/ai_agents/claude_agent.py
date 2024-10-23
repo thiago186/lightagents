@@ -1,12 +1,10 @@
-import ast
 from enum import Enum
-from typing import Any, Callable, Dict, List, Optional, Sequence
+from typing import Any, Callable, List, Optional, Sequence
 
 # from anthropic import AnthropicBedrock
 from anthropic import AnthropicVertex
 from anthropic.types import Message as AnthropicMessage
 from anthropic.types import TextBlock as AnthropicTextBlock
-from anthropic.types import ToolUseBlock as AnthropicToolUseBlock
 
 from app.config import appSettings
 from app.logger_config import setup_logger
@@ -208,12 +206,7 @@ class ClaudeAgent(ThreadAgent):
             return tool_use_messages
 
         else:
-            logger.error(
-                f"Unexpected stop reason: {stop_reason} | type: {type(response.stop_reason)}"
-            )
-            raise ValueError(
-                f"Unexpected stop reason: {stop_reason} | type: {type(response.stop_reason)}"
-            )
+            raise ValueError(f"Unexpected stop reason: {stop_reason}")
 
     def process_tools(
         self, tool_use_messages: List[ToolUseMessage], **kwargs: Any
