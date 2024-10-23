@@ -125,8 +125,8 @@ def bedrock_claude_messages_serializer(
 
     0. If a roles_mapping is provided, it will be used for role mapping.
     1. The roles must alternate between user and assistant.
-        If there is two user messages inMutableSequence, they will be included inside
-        "content" list.
+        If there is two user messages inMutableSequence, they will be
+        included inside "content" list.
     2. If there is any, only the first system message will be considered.
     """
     if not isinstance(messages, list):
