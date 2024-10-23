@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Any, Callable, List, MutableSequence, Optional
+from typing import Any, Callable, List, MutableSequence, Optional, Sequence
 
 # from anthropic import AnthropicBedrock
 from anthropic import AnthropicVertex
@@ -83,7 +83,7 @@ class ClaudeAgent(ThreadAgent):
 
     def agent_run(
         self, thread_messages: MutableSequence[MessageBase], **kwargs: Any
-    ) -> MutableSequence[MessageBase]:
+    ) -> Sequence[MessageBase]:
         """Execute agent's workflow entirely.
 
         Args:
@@ -99,6 +99,19 @@ class ClaudeAgent(ThreadAgent):
         response = self.send_to_claude(thread_messages, **kwargs)
 
         run_messages = self.process_model_response(response, **kwargs)
+
+        thread_messages.extend(run_messages)
+
+        # TODO: send tool results to the LLM
+        logger.debug(
+            f"Sending tool results back to agent. {len(run_messages)}"
+        )
+
+        # if there is at least one ToolUseMessage in run_messages
+        if any(
+            isinstance(message, ToolUseMessage) for message in run_messages
+        ):
+            self.agent_run(thread_messages, **kwargs)
 
         return run_messages
 
@@ -149,7 +162,7 @@ class ClaudeAgent(ThreadAgent):
 
     def process_model_response(
         self, response: AnthropicMessage, **kwargs: Any
-    ) -> MutableSequence[MessageBase]:
+    ) -> Sequence[MessageBase]:
         """Process the model response."""
         stop_reason = response.stop_reason
         if stop_reason in ["end_turn", "max_tokens", "stop_sequence"]:
@@ -159,7 +172,7 @@ class ClaudeAgent(ThreadAgent):
 
             first_message = response.content[0]
             if isinstance(first_message, AnthropicTextBlock):
-                messages = [
+                messages: List[MessageBase] = [
                     Message(
                         role=MessageRole.AI,
                         type=MessageType.TEXT,
@@ -202,7 +215,6 @@ class ClaudeAgent(ThreadAgent):
             logger.debug(f"Passing to process_tools: {tool_use_messages}")
             tool_use_messages = self.process_tools(tool_use_messages)
 
-            # TODO: send tool results to the LLM
             return tool_use_messages
 
         else:

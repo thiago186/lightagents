@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Any, Callable, Dict, List,MutableSequence
+from typing import Any, Callable, Dict, List, MutableSequence, Sequence
 
 from pydantic import BaseModel
 
@@ -12,21 +12,19 @@ class ThreadAgent(ABC, BaseModel):
     """Abstract schema for a Thread agent."""
 
     model_config = model_config
-    messages_serializer: Callable[..., List[Dict[str, str]]] = (
-        base_serializer
-    )
+    messages_serializer: Callable[..., List[Dict[str, str]]] = base_serializer
     verbose: bool = False
 
     @abstractmethod
     def agent_run(
-        self, thread_messages:MutableSequence[MessageBase], **kwargs: Any
-    ) ->MutableSequence[MessageBase]:
+        self, thread_messages: MutableSequence[MessageBase], **kwargs: Any
+    ) -> Sequence[MessageBase]:
         """Run the agent."""
         raise NotImplementedError
 
     @abstractmethod
     def process_tools(
         self, tool_use_messages: List[ToolUseMessage], **kwargs: Any
-    ) -> List[ToolUseMessage]:
+    ) -> MutableSequence[ToolUseMessage]:
         """Process the tools."""
         raise NotImplementedError
