@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Any, Callable, List, Optional, Sequence
+from typing import Any, Callable, List, MutableSequence, Optional
 
 # from anthropic import AnthropicBedrock
 from anthropic import AnthropicVertex
@@ -82,8 +82,8 @@ class ClaudeAgent(ThreadAgent):
             self.tools_registry.register_tools(self.tools)
 
     def agent_run(
-        self, thread_messages: List[MessageBase], **kwargs: Any
-    ) -> Sequence[MessageBase]:
+        self, thread_messages: MutableSequence[MessageBase], **kwargs: Any
+    ) -> MutableSequence[MessageBase]:
         """Execute agent's workflow entirely.
 
         Args:
@@ -103,7 +103,7 @@ class ClaudeAgent(ThreadAgent):
         return run_messages
 
     def send_to_claude(
-        self, thread_messages: list[MessageBase], **kwargs: Any
+        self, thread_messages: MutableSequence[MessageBase], **kwargs: Any
     ) -> AnthropicMessage:
         """Send thread's messages to the model and return the raw response.
 
@@ -149,7 +149,7 @@ class ClaudeAgent(ThreadAgent):
 
     def process_model_response(
         self, response: AnthropicMessage, **kwargs: Any
-    ) -> Sequence[MessageBase]:
+    ) -> MutableSequence[MessageBase]:
         """Process the model response."""
         stop_reason = response.stop_reason
         if stop_reason in ["end_turn", "max_tokens", "stop_sequence"]:

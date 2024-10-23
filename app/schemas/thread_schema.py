@@ -1,9 +1,9 @@
 from enum import Enum
-from typing import Any, Dict
+from typing import Any, Dict, MutableSequence
 
 from pydantic import BaseModel
 
-from app.schemas.messages_schemas import Message
+from app.schemas.messages_schemas import MessageBase
 from app.schemas.model_config import model_config
 from app.schemas.thread_agent_schema import ThreadAgent
 
@@ -19,12 +19,25 @@ class ThreadBase(BaseModel):
 
     model_config = model_config
     type: ThreadType
-    messages: list[Message] = []
+    messages: MutableSequence[MessageBase] = []
     external_thread_fields: Dict[str, Any] = {}
 
-    def add_message(self, message: Message) -> None:
+    def add_message(self, message: MessageBase) -> None:
         """Add a message to the thread."""
+        if not isinstance(message, MessageBase):
+            raise ValueError("The message must be an instance of MessageBase.")
+        
         self.messages.append(message)
+       
+    def add_messages_list(self, messages:MutableSequence[MessageBase]) -> None:
+        """Add a list of messages to the thread."""
+        if not all(isinstance(message, MessageBase) for message in messages):
+            raise ValueError(
+                "All messages must be instances of MessageBase."
+            )
+        
+        for message in messages:
+            self.add_message(message)
 
     def process_thread(self, thread_agent: ThreadAgent) -> None:
         """Process the thread."""
@@ -36,7 +49,8 @@ class ThreadBase(BaseModel):
         ## TODO:
         ## 1. Deal gracefully with exceptions
         ## 2. Update external thread fields based on the agent's output
-        message = thread_agent.agent_run(
+        messages = thread_agent.agent_run(
             self.messages, **self.external_thread_fields
         )
-        self.add_message(message)
+        self.add_messages_list(messages)
+

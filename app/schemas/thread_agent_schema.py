@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Any, Callable, Dict, List, Sequence
+from typing import Any, Callable, Dict, List,MutableSequence
 
 from pydantic import BaseModel
 
@@ -19,8 +19,8 @@ class ThreadAgent(ABC, BaseModel):
 
     @abstractmethod
     def agent_run(
-        self, thread_messages: List[MessageBase], **kwargs: Any
-    ) -> Sequence[MessageBase]:
+        self, thread_messages:MutableSequence[MessageBase], **kwargs: Any
+    ) ->MutableSequence[MessageBase]:
         """Run the agent."""
         raise NotImplementedError
 

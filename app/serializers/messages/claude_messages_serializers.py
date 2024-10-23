@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from typing import Any, Dict, List,MutableSequence
 
 from app.logger_config import setup_logger
 from app.schemas.messages_schemas import (
@@ -60,7 +60,7 @@ def claude_text_message_serializer(
 
 
 def claude_messages_serializer(
-    messages: List[MessageBase], **kwargs: Any
+    messages:MutableSequence[MessageBase], **kwargs: Any
 ) -> List[Dict[str, Any]]:
     """Serialize a series of messages for Claude API.
 
@@ -94,7 +94,7 @@ def claude_messages_serializer(
 
 
 def bedrock_claude_messages_serializer(
-    messages: List[MessageBase], **kwargs: Any
+    messages:MutableSequence[MessageBase], **kwargs: Any
 ) -> List[Dict[str, str]]:
     """Serialize messages for Bedrock Claude model.
 
@@ -115,7 +115,7 @@ def bedrock_claude_messages_serializer(
 
     0. If a roles_mapping is provided, it will be used for role mapping.
     1. The roles must alternate between user and assistant.
-        If there is two user messages in sequence, they will be included inside
+        If there is two user messages inMutableSequence, they will be included inside
         "content" list.
     2. If there is any, only the first system message will be considered.
     """
