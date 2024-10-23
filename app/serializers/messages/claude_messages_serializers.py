@@ -17,7 +17,7 @@ logger = setup_logger(__name__)
 
 def claude_text_message_serializer(
     message: Message, **kwargs: Any
-) -> Dict[str, Any]:
+) -> Dict[str, Any] | None:
     """Seriliaze a single message for Claude API.
 
     Handles only text messages.
@@ -46,10 +46,16 @@ def claude_text_message_serializer(
         role_mapping = kwargs["roles_mapping"]
 
     if message.type != MessageType.TEXT:
-        raise ValueError("Only text messages are supported.")
+        logger.warning(
+            f"'{message.type}' message type is not supported. Message ignored."
+        )
+        return None
 
     if not role_mapping.get(message.role):
-        raise ValueError(f"Role '{message.role}' is not supported.")
+        logger.warning(
+            f"'{message.role}' role is not supported. Ignoring message."
+        )
+        return None
 
     serialized_message = {
         "role": role_mapping.get(message.role),
@@ -60,7 +66,7 @@ def claude_text_message_serializer(
 
 
 def claude_messages_list_serializer(
-    messages:MutableSequence[MessageBase], **kwargs: Any
+    messages: MutableSequence[MessageBase], **kwargs: Any
 ) -> List[Dict[str, Any]]:
     """Serialize a series of messages for Claude API.
 
@@ -75,7 +81,8 @@ def claude_messages_list_serializer(
                 serialized_message = claude_text_message_serializer(
                     message, **kwargs
                 )
-                serialized_messages.append(serialized_message)
+                if serialized_message:
+                    serialized_messages.append(serialized_message)
             else:
                 logger.warning(
                     f"'{message.type}' message type is not supported."
@@ -83,7 +90,9 @@ def claude_messages_list_serializer(
                 )
 
         elif isinstance(message, ToolUseMessage):
-            serialized_messages.extend(claude_tool_response_serializer(message))
+            tool_serialized_messages = claude_tool_response_serializer(message)
+            if any(tool for tool in tool_serialized_messages):
+                serialized_messages.extend(tool_serialized_messages)
 
         else:
             logger.warning(
@@ -95,7 +104,7 @@ def claude_messages_list_serializer(
 
 
 def bedrock_claude_messages_serializer(
-    messages:MutableSequence[MessageBase], **kwargs: Any
+    messages: MutableSequence[MessageBase], **kwargs: Any
 ) -> List[Dict[str, str]]:
     """Serialize messages for Bedrock Claude model.
 

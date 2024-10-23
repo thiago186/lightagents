@@ -7,6 +7,7 @@ from typing import (
     MutableSequence,
     Optional,
     Sequence,
+    Union,
 )
 
 # from anthropic import AnthropicBedrock
@@ -164,18 +165,48 @@ class ClaudeAgent(ThreadAgent):
         if self.verbose:
             logger.debug(f"Serialized messages: {serialized_messages}")
 
-        if len(self.tools) == 0:
+        if self.system_message_selector == "first":
+            system_message = next(
+                (
+                    message
+                    for message in thread_messages
+                    if message.role == MessageRole.SYSTEM
+                ),
+                None,
+            )
+
+        elif self.system_message_selector == "last":
+            system_message = next(
+                (
+                    message
+                    for message in reversed(thread_messages)
+                    if message.role == MessageRole.SYSTEM
+                ),
+                None,
+            )
+
+        serialized_tools = [self.tools_serializer(tool) for tool in self.tools]
+        logger.debug(
+            f"Serialized tools: {serialized_tools}"
+        ) if self.verbose else None
+
+        if system_message and isinstance(system_message, Message):
+            logger.debug(
+                f"Calling agent with {self.system_message_selector} "
+                "system prompt."
+            ) if self.verbose else None
+
             response = client.messages.create(
                 model=self.model,
                 max_tokens=self.max_tokens,
                 messages=serialized_messages,
+                tools=serialized_tools,
+                system=system_message.content,
             )
+
         else:
-            serialized_tools = [
-                self.tools_serializer(tool) for tool in self.tools
-            ]
             logger.debug(
-                f"Serialized tools: {serialized_tools}"
+                "Calling agent without system prompt."
             ) if self.verbose else None
 
             response = client.messages.create(

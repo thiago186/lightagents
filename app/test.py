@@ -42,7 +42,7 @@ class GetWeather(ToolBaseSchema):
         """Get the weather for a specific location."""
         
         return ToolResponseSchema(
-            content=f"The weather for {location} is sunny. the temperature will be 32 deegress celsius,  with a lot of sun! remember that it could rain, bring a coat.",
+            content=f"The weather for {location} is rainy and cold. The temperature will be 10 degrees Celsius with heavy rain. Don't forget to bring an umbrella and wear warm clothes.",
         )
 
 get_weather_tool = GetWeather(location="")
@@ -55,8 +55,8 @@ print(json.dumps(claude_tool_calling_serializer(get_weather_tool), indent=4))
 
 from app.utils.serializers import role_mapping_serializer
 
-# agent = ClaudeAgent(tools = [get_weather_tool], verbose = True, messages_serializer = role_mapping_serializer)
-agent = ClaudeAgent( tools = [get_weather_tool], verbose = True)
+agent = ClaudeAgent(tools = [get_weather_tool], verbose = True)
+# agent = ClaudeAgent(verbose = True)
 # agent.agent_run([message1])
 # thread.process_thread(agent)
 # w = agent.agent_run(thread.messages)
@@ -66,9 +66,22 @@ msg6 = Message(
     content = "Eu moro em são paulo, qual a previsão do tempo?",
     type = MessageType.TEXT
 )
-run_msgs = agent.agent_run([msg6])
+
+system_msg = Message(
+    role = MessageRole.SYSTEM,
+    content = "You're a helpfull assistant. keep your answers short and direct. try to use maximum 3 words.",
+    type = MessageType.TEXT
+)
+
+system_msg2 = Message(
+    role=MessageRole.SYSTEM,
+    content="You're a helpfull assistant. But you talks like a pirate. Always respond like a pirate!",
+    type=MessageType.TEXT
+)
+
+run_msgs = agent.agent_run([msg6, system_msg2, system_msg])
 print(run_msgs[-1])
-agent.agent_run([msg1])
+# agent.agent_run([msg1])
 # thread.add_message(msg6)
 # thread.process_thread(agent)
 # print("----- Conversation ------")
