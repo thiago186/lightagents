@@ -58,7 +58,7 @@ def setup_logger(name: Optional[str] = None, **kwargs: Any) -> logging.Logger:
         console_handler.setLevel(logging.DEBUG)
 
         formatter = ColoredFormatter(
-            "%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+            "%(asctime)s [%(levelname)s] %(name)s:\n%(message)s",
             datefmt="%Y-%m-%d %H:%M:%S",
         )
 

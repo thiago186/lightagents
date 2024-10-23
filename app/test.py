@@ -1,67 +1,65 @@
+from pydantic import Field
+
 from app.ai_agents.claude_agent import ClaudeAgent
 from app.logger_config import setup_logger
+from app.schemas import ToolBaseSchema
 from app.schemas.messages_schemas import Message, MessageRole, MessageType
 from app.schemas.thread_schema import ThreadBase, ThreadType
-from app.utils.serializers import bedrock_claude_serializer
+from app.serializers.tools import claude_tool_calling_serializer
 
 message1 = Message(
     role=MessageRole.USER,
     type=MessageType.TEXT,
-    content="Oi! Meu nome é Thiago."
+    content="Oi! Meu nome é Thiago.",
 )
 
-# db = mongoDb()
-# numero = message1.from_
-
-# if db.find_one({"numero": numero}):
-#     thread = db.find_one({"numero": numero})["thread"]
-#     thread.add_message(message1)
-#     answer  = thread.process_thread(agent)
-#     send_to_user(answer)
-#     db.update({"numero": numero}, {"thread": thread})
-# else: 
-#     thread = ThreadBase(
-#         type=ThreadType.BASIC,
-#         messages=[message1]
-#     )
-#     thread.add_message(message1)
-#     answer  = thread.process_thread(agent)
-#     send_to_user(answer)
-#     db.update({"numero": numero}, {"thread": thread})
-    
-
 message2 = Message(
-    role=MessageRole.AI,
-    type=MessageType.TEXT,
-    content="Oi! Tudo bem?"
+    role=MessageRole.AI, type=MessageType.TEXT, content="Oi! Tudo bem?"
 )
 
 message3 = Message(
-    role=MessageRole.USER,
-    type=MessageType.TEXT,
-    content="Sim, e você?"
+    role=MessageRole.USER, type=MessageType.TEXT, content="Sim, e você?"
 )
 
 message4 = Message(
-    role=MessageRole.USER,
-    type=MessageType.TEXT,
-    content="Qual é meu nome?"
-)
-
-message5 = Message(
-    role=MessageRole.USER,
-    type=MessageType.TEXT,
-    content="Quem é você e qual seu nome?"
+    role=MessageRole.USER, type=MessageType.TEXT, content="Qual é meu nome?"
 )
 
 thread = ThreadBase(
-    type=ThreadType.BASIC,
-    messages=[message1, message2, message3, message4]
+    type=ThreadType.BASIC, messages=[message1, message2, message3, message4]
 )
 
-bedrock_claude_serializer(thread.messages)
 
-agent = ClaudeAgent(serializer=bedrock_claude_serializer)
-thread.process_thread(agent)
-# thread.add_message(message5)
+class GetWeather(ToolBaseSchema):
+    name: str = "get_weather"
+    description: str = "Get the weather for a specific location."
+    # required: list[str] = ["location"]
+    location: str = Field(
+        ..., description="The location to get the weather for."
+    )
+
+    def run(self, location: str) -> str:
+        return f"The weather in {location} is sunny."
+
+get_weather_tool = GetWeather(location="")
+
+import json
+
+print(json.dumps(claude_tool_calling_serializer(get_weather_tool), indent=4))
+
+agent = ClaudeAgent(tools = [get_weather_tool], verbose = True)
+# agent.agent_run([message1])
+# thread.process_thread(agent)
 # w = agent.agent_run(thread.messages)
+
+msg6 = Message(
+    role = MessageRole.USER,
+    content = "Eu moro em são paulo, qual a previsão do tempo?",
+    type = MessageType.TEXT
+)
+agent.agent_run([msg6])
+# thread.add_message(msg6)
+# thread.process_thread(agent)
+# print("----- Conversation ------")
+# for message in thread.messages:
+#     print(f"{message.role}: {message.content}")
