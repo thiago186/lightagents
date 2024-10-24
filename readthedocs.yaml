@@ -6,13 +6,10 @@ build:
     python: "3.11"
   jobs:
     post_create_environment:
-      # Instalar poetry
       - pip install poetry
-      # Configurar poetry para não criar ambiente virtual
       - poetry config virtualenvs.create false
     post_install:
-      # Instalar apenas as dependências do grupo dev
-      - poetry install --only dev
+      - poetry install --only doc
 
 mkdocs:
   configuration: mkdocs.yml
