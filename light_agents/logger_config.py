@@ -23,6 +23,7 @@ Color = Literal[
     "white",
 ]
 
+
 class ColoredFormatter(logging.Formatter):
     """Custom log formatter that colorizes the entire log message."""
 
@@ -49,7 +50,7 @@ class ColoredFormatter(logging.Formatter):
 def setup_logger(name: Optional[str] = None, **kwargs: Any) -> logging.Logger:
     """Set up the logger."""
     log_level = kwargs.get("log_level", logging.DEBUG)
-    
+
     logger = logging.getLogger(name)
     logger.setLevel(log_level)
 
@@ -58,7 +59,7 @@ def setup_logger(name: Optional[str] = None, **kwargs: Any) -> logging.Logger:
         console_handler.setLevel(logging.DEBUG)
 
         formatter = ColoredFormatter(
-            "%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+            "%(asctime)s [%(levelname)s] %(name)s:\n%(message)s",
             datefmt="%Y-%m-%d %H:%M:%S",
         )
 
