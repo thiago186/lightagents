@@ -8,11 +8,15 @@ build:
   tools:
     python: "3.11"
 
+python:
+  install:
+    - method: poetry
+      groups: [doc]
+  
   jobs:
     post_create_environment:
       - pip install poetry
       - poetry config virtualenvs.create false
 
     post_install:
-      - pip uninstall -y mkdocs
       - poetry install --only doc
