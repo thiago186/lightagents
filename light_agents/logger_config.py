@@ -41,7 +41,7 @@ class ColoredFormatter(logging.Formatter):
         if levelname in colors:
             color = colors[levelname]
             message = super(ColoredFormatter, self).format(record)
-            colored_message = colored(message, color)
+            colored_message: str = colored(message, color)
             return colored_message
 
         return super(ColoredFormatter, self).format(record)

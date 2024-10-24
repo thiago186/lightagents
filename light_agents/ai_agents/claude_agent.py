@@ -9,13 +9,13 @@ from typing import (
     Sequence,
 )
 
-# from anthropic import AnthropicBedrock
 from anthropic import AnthropicVertex
 from anthropic.types import Message as AnthropicMessage
 from anthropic.types import TextBlock as AnthropicTextBlock
 from pydantic import PrivateAttr
 
 from light_agents.config import appSettings
+from light_agents.core.tool_registry import ToolRegistry
 from light_agents.logger_config import setup_logger
 from light_agents.schemas import ToolBaseSchema
 from light_agents.schemas.messages_schemas import (
@@ -30,7 +30,6 @@ from light_agents.serializers.messages.claude_messages_serializers import (
     claude_messages_list_serializer,
 )
 from light_agents.serializers.tools import claude_tool_calling_serializer
-from light_agents.tool_registry import ToolRegistry
 
 logger = setup_logger(__name__)
 
