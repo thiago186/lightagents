@@ -70,7 +70,8 @@ pythonpath="."
 addopts="--doctest-modules"
 
 [tool.taskipy.tasks]
-lint = "bandit -r ./light_agents && ruff check ./light_agents && ruff check --select I --fix ./light_agents && mypy ./light_agents"
+secure = "bandit -r ./light_agents"
+lint = "ruff check ./light_agents && ruff check --select I --fix ./light_agents && mypy ./light_agents"
 pre_docs = "python scripts/gen_docs.py"
 docs = "mkdocs serve --dev-addr=localhost:8001"
 pre_test = "task lint"
