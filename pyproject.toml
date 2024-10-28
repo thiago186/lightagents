@@ -32,6 +32,7 @@ google = "^3.0.0"
 google-auth = "^2.35.0"
 google-auth-httplib2 = "^0.2.0"
 google-auth-oauthlib = "^1.2.1"
+openai = "^1.52.2"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.3"
@@ -70,6 +71,7 @@ addopts="--doctest-modules"
 
 [tool.taskipy.tasks]
 lint = "bandit -r ./light_agents && ruff check ./light_agents && ruff check --select I --fix ./light_agents && mypy ./light_agents"
+pre_docs = "python scripts/gen_docs.py"
 docs = "mkdocs serve --dev-addr=localhost:8001"
 pre_test = "task lint"
 test = "pytest -s -x --cov=light_agents -vv"
