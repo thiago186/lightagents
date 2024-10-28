@@ -1,6 +1,6 @@
 from typing import Any, Dict, List, MutableSequence
 
-from light_agents.logger_config import setup_logger
+from light_agents.core.logger_config import setup_logger
 from light_agents.schemas.messages_schemas import (
     Message,
     MessageBase,
