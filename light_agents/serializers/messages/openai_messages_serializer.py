@@ -11,6 +11,10 @@ from light_agents.schemas.messages_schemas import (
     MessageBase,
     MessageRole,
     MessageType,
+    ToolUseMessage,
+)
+from light_agents.serializers.tools.openai_tools_serializer import (
+    openai_tooL_response_serializer,
 )
 
 logger = setup_logger(__name__)
@@ -116,6 +120,12 @@ def openai_messages_list_serializer(
                     f"'{message.type}' message type is not supported."
                     "Message will be ignored."
                 )
+                
+        elif isinstance(message, ToolUseMessage):
+            tool_serialized_messages = openai_tooL_response_serializer(message)
+            if any(tool for tool in tool_serialized_messages):
+                serialized_messages.extend(tool_serialized_messages)
+            
         else:
             logger.warning(
                 f"'{message}' message type is not yet supported."
