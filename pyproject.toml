@@ -5,7 +5,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "light-agents"
-version = "0.0.1"
+version = "0.1.1"
 description = "Ligthweight library for inserting LLM agents in conversations"
 authors = ["Thiago Amorim <thiago.wander22@gmail.com>"]
 readme = "README.md"
