@@ -14,6 +14,7 @@ class AppSettings(BaseSettings):
     GCP_REGION: Optional[str] = None
     AWS_ACCESS_KEY: Optional[str] = None
     AWS_SECRET_KEY: Optional[str] = None
+    OPENAI_API_KEY: Optional[str] = None
 
 
 appSettings = AppSettings()

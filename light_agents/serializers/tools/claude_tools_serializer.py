@@ -1,9 +1,11 @@
 from enum import Enum
 from typing import Any, Dict
 
-from light_agents.logger_config import setup_logger
+from light_agents.core.logger_config import setup_logger
 from light_agents.schemas import ToolBaseSchema, ToolUseMessage
-from light_agents.serializers.tools.base_serializers import python_type_to_json_type
+from light_agents.serializers.tools.base_serializers import (
+    python_type_to_json_type,
+)
 
 logger = setup_logger(__name__)
 
@@ -29,14 +31,18 @@ def claude_tool_calling_serializer(
         claude_format["input_schema"]["required"] = llm_function.required
 
     for param in function_dict.keys():
-        param_type = python_type_to_json_type(function_dict[param])
+        json_param_type = python_type_to_json_type(function_dict[param])
         claude_format["input_schema"]["properties"][param] = {
-            "type": param_type,
+            "type": json_param_type,
             "description": llm_function.model_fields[param].description,
         }
 
         annotation = llm_function.model_fields[param].annotation
-        if annotation and isinstance(annotation, type) and issubclass(annotation, Enum):
+        if (
+            annotation
+            and isinstance(annotation, type)
+            and issubclass(annotation, Enum)
+        ):
             claude_format["input_schema"]["properties"][param]["enum"] = list(
                 annotation.__members__.keys()
             )
@@ -82,12 +88,16 @@ def claude_tool_response_serializer(
 
     tool_output = tool.tool_outputs
     if not isinstance(tool_output, str):
-        logger.warning("The tool output is not a string. Converting to string.")
+        logger.warning(
+            "The tool output is not a string. Converting to string."
+        )
         tool_output = str(tool.tool_outputs)
 
     tool_input = tool.input_params_dict
     if not isinstance(tool_input, dict):
-        logger.warning("The tool input is not a dictionary. Converting to dictionary.")
+        logger.warning(
+            "The tool input is not a dictionary. Converting to dictionary."
+        )
         tool_input = {"input": str(tool.input_params_dict)}
 
     serialized_tool_calling_message = {

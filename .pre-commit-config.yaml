@@ -1,0 +1,27 @@
+# .pre-commit-config.yaml
+default_language_version:
+    python: python3.11  # ajuste para sua versão do Python
+
+repos:
+-   repo: local
+    hooks:
+    - id: security-check
+      name: Security Check
+      entry: poetry run task secure
+      language: python
+      pass_filenames: false
+      always_run: true
+
+    - id: lint
+      name: Lint Check
+      entry: poetry run task lint
+      language: system
+      pass_filenames: false
+      always_run: true
+
+    # -   id: update-docs
+    #     name: Update Docs
+    #     entry: poetry run gen-docs
+    #     language: system
+    #     pass_filenames: false
+    #     always_run: true
