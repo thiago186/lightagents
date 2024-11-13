@@ -87,6 +87,9 @@ class OpenAIAgent(ThreadAgent):
     verbose: bool = True
     """Flag to indicate if the agent should print messages."""
 
+    temperature: float = 1
+    """Temperature parameter for the model."""
+
     tools: List[ToolBaseSchema] = []
     """List of tools available for the agent."""
 
@@ -147,8 +150,6 @@ class OpenAIAgent(ThreadAgent):
         if not kwargs.get("calling_from_inside_agent_run"):
             self._current_run_messages = []
 
-        logger.debug("Running OpenAI Agent.") if self.verbose else None
-
         model_response = self.send_to_openai(thread_messages, **kwargs)
         logger.debug(
             f"Model response: {model_response}\nProcessing it"
@@ -192,20 +193,20 @@ class OpenAIAgent(ThreadAgent):
             serialized_tools = [
                 self.tools_serializer(tool) for tool in self.tools
             ]
-            logger.debug(
-                f"Serialized tools: {serialized_tools}"
-            ) if self.verbose else None
+
             completion = client.chat.completions.create(
                 model=self.model,
                 messages=messages,
                 max_tokens=self.max_tokens,
                 tools=serialized_tools,
+                temperature=self.temperature,
             )
         else:
             completion = client.chat.completions.create(
                 model=self.model,
                 messages=messages,
                 max_tokens=self.max_tokens,
+                temperature=self.temperature,
             )
         return completion
 
@@ -226,7 +227,7 @@ class OpenAIAgent(ThreadAgent):
 
         """
         response_messages = []
-        # tool_responses = []
+
         for choice in completion.choices:
             if choice.finish_reason == "stop":
                 logger.debug(
@@ -242,7 +243,7 @@ class OpenAIAgent(ThreadAgent):
                     )
                     response_messages.append(response_message)
                     return response_messages
-                
+
                 else:
                     raise AIAgentCompletionError(
                         "Model stopped without generating any content. "
@@ -296,7 +297,7 @@ class OpenAIAgent(ThreadAgent):
                 logger.warning("Model reached maximum token limits.")
                 # TODO: handle this cas
                 ...
-                
+
                 return []
 
             elif choice.finish_reason == "content_filter":
@@ -312,7 +313,6 @@ class OpenAIAgent(ThreadAgent):
                 return []
 
         raise AIAgentCompletionError(f"No messages were\n{completion}")
-        
 
     def process_tools(
         self, tool_use_messages: List[ToolUseMessage], **kwargs: Any
@@ -347,13 +347,15 @@ class OpenAIAgent(ThreadAgent):
 
                 try:
                     logger.debug(
-                        f"Executing tool: '{tool_message.name}' "
+                        f"Calling registrytools: '{tool_message.name}' "
                         f"with args: {args_dict}"
                     ) if self.verbose else None
 
+                    kwargs["verbose"] = self.verbose
                     tool_response = self.tools_registry.execute_tool(
                         tool_message.name, args_dict, **kwargs
                     )
+                    kwargs.pop("verbose")
 
                     logger.info(
                         f"Tool returned: \n{tool_response}"
@@ -365,12 +367,12 @@ class OpenAIAgent(ThreadAgent):
                             tool_response.external_fields
                         )
                     updated_tool_use_messages.append(tool_message)
-                    
+
                 except Exception as e:
                     tool_message.is_error = True
                     logger.error(
                         f"Error executing tool: '{tool_message.name}'"
                     )
                     raise ValueError(f"Error executing tool: {e}")
-                
+
         return updated_tool_use_messages
