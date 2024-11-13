@@ -5,7 +5,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "light-agents"
-version = "0.1.1"
+version = "0.1.2"
 description = "Ligthweight library for inserting LLM agents in conversations"
 authors = ["Thiago Amorim <thiago.wander22@gmail.com>"]
 readme = "README.md"
@@ -71,7 +71,8 @@ addopts="--doctest-modules"
 
 [tool.taskipy.tasks]
 secure = "bandit -r ./light_agents"
-lint = "ruff check ./light_agents && ruff check --select I --fix ./light_agents && mypy ./light_agents"
+lint = "ruff check ./light_agents && ruff check --select I --fix ./light_agents && task typecheck"
+typecheck = "mypy ./light_agents"
 pre_docs = "python scripts/gen_docs.py"
 docs = "mkdocs serve --dev-addr=localhost:8001"
 pre_test = "task lint"

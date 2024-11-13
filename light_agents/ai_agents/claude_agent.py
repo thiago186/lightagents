@@ -134,7 +134,7 @@ class ClaudeAgent(ThreadAgent):
             >>> agent.agent_run([Message(content="Hello",type="text", role="user)])
             [Message(content="This is a Response", role="ai", type="text")]
 
-        """
+        """#noqa
         if not kwargs.get("calling_from_inside_agent_run"):
             self._current_run_messages = []
 
@@ -311,7 +311,7 @@ class ClaudeAgent(ThreadAgent):
 
                 try:
                     logger.debug(
-                        f"Executing tool: '{tool_message.name}' "
+                        f"Calling toolregistry: '{tool_message.name}' "
                         f"with args: {args_dict}"
                     )
                     tool_response = self.tools_registry.execute_tool(
